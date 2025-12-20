@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Paiement annulé{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow text-center">
+            <div class="card-body py-5">
+                <div class="mb-4">
+                    <i class="fas fa-times-circle fa-5x text-warning"></i>
+                </div>
+                <h2 class="mb-3">Paiement annulé</h2>
+                <p class="lead mb-4">Vous avez annulé le paiement de la commande #{{ order.id }}.</p>
+
+                <p class="text-muted mb-4">
+                    Votre commande est toujours en attente de paiement.
+                </p>
+
+                <div class="d-grid gap-2">
+                    <a href="{% url 'payments:payment_process' order.id %}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-redo"></i> Réessayer le paiement
+                    </a>
+                    <a href="{% url 'orders:order_detail' order.id %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-eye"></i> Voir ma commande
+                    </a>
+                    <a href="{% url 'products:product_list' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-shopping-bag"></i> Continuer mes achats
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

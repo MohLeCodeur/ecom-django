@@ -1,0 +1,325 @@
+{% extends 'base.html' %}
+
+{% block title %}Accueil - InnovAfrique{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section mb-5">
+    <div class="container">
+        <div class="row align-items-center py-5">
+            <div class="col-lg-6 text-center text-lg-start">
+                <h1 class="display-3 fw-bold mb-4">
+                    <span class="text-gradient">InnovAfrique</span>
+                </h1>
+                <p class="lead mb-4 text-dark">
+                    Découvrez les produits innovants d'Afrique.
+                    Des articles authentiques, de qualité et à prix compétitifs.
+                </p>
+                <div class="d-flex gap-3 justify-content-center justify-content-lg-start">
+                    <a href="{% url 'products:product_list' %}" class="btn btn-primary btn-lg px-4">
+                        <i class="fas fa-shopping-bag"></i> Découvrir nos produits
+                    </a>
+                    {% if not user.is_authenticated %}
+                    <a href="{% url 'accounts:register' %}" class="btn btn-outline-primary btn-lg px-4">
+                        <i class="fas fa-user-plus"></i> S'inscrire
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-lg-6 text-center mt-4 mt-lg-0">
+                <div class="hero-image">
+                    <i class="fas fa-shopping-cart fa-10x text-primary opacity-75"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Section -->
+<div class="stats-section mb-5">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-3 mb-3">
+                <div class="stat-card">
+                    <i class="fas fa-box-open fa-3x text-primary mb-3"></i>
+                    <h3 class="fw-bold">{{ products_count|default:"100+" }}</h3>
+                    <p class="text-muted">Produits</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="stat-card">
+                    <i class="fas fa-users fa-3x text-success mb-3"></i>
+                    <h3 class="fw-bold">1000+</h3>
+                    <p class="text-muted">Clients satisfaits</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="stat-card">
+                    <i class="fas fa-truck fa-3x text-info mb-3"></i>
+                    <h3 class="fw-bold">Livraison</h3>
+                    <p class="text-muted">Rapide et sûre</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="stat-card">
+                    <i class="fas fa-shield-alt fa-3x text-warning mb-3"></i>
+                    <h3 class="fw-bold">100%</h3>
+                    <p class="text-muted">Sécurisé</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Featured Products -->
+{% if featured_products %}
+<section class="my-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">
+                <i class="fas fa-star text-warning"></i> Produits Vedettes
+            </h2>
+            <p class="text-muted">Découvrez nos meilleures offres du moment</p>
+        </div>
+        <div class="row">
+            {% for product in featured_products %}
+            <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                <div class="card product-card h-100 shadow-sm">
+                    <a href="{% url 'products:product_detail' product.slug %}" class="text-decoration-none">
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}" class="card-img-top product-image" alt="{{ product.name }}">
+                        {% else %}
+                        <div class="bg-light d-flex align-items-center justify-content-center" style="height: 250px;">
+                            <i class="fas fa-image fa-3x text-secondary"></i>
+                        </div>
+                        {% endif %}
+
+                        {% if product.discount_percentage > 0 %}
+                        <span class="badge bg-danger position-absolute top-0 end-0 m-2">
+                            -{{ product.discount_percentage }}%
+                        </span>
+                        {% endif %}
+                    </a>
+
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a href="{% url 'products:product_detail' product.slug %}"
+                                class="text-dark text-decoration-none">
+                                {{ product.name }}
+                            </a>
+                        </h5>
+                        <p class="card-text text-muted small">{{ product.description|truncatewords:15 }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                {% if product.discount_percentage > 0 %}
+                                <small class="text-muted text-decoration-line-through d-block">{{ product.price }}
+                                    FCFA</small>
+                                <span class="h5 text-primary mb-0 fw-bold">{{ product.discounted_price }} FCFA</span>
+                                {% else %}
+                                <span class="h5 text-primary mb-0 fw-bold">{{ product.price }} FCFA</span>
+                                {% endif %}
+                            </div>
+                            <a href="{% url 'products:product_detail' product.slug %}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{% url 'products:product_list' %}" class="btn btn-outline-primary btn-lg">
+                Voir tous les produits <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Categories -->
+{% if categories %}
+<section class="my-5 bg-light py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">
+                <i class="fas fa-th-large"></i> Catégories
+            </h2>
+            <p class="text-muted">Explorez nos différentes catégories de produits</p>
+        </div>
+        <div class="row justify-content-center">
+            {% for category in categories %}
+            <div class="col-lg-2 col-md-3 col-sm-4 col-6 mb-4">
+                <a href="{% url 'products:product_list_by_category' category.slug %}" class="text-decoration-none">
+                    <div class="card category-card text-center h-100 shadow-sm">
+                        {% if category.image %}
+                        <img src="{{ category.image.url }}" class="card-img-top" alt="{{ category.name }}"
+                            style="height: 120px; object-fit: cover;">
+                        {% else %}
+                        <div class="bg-gradient-primary d-flex align-items-center justify-content-center"
+                            style="height: 120px;">
+                            <i class="fas fa-folder fa-3x text-white"></i>
+                        </div>
+                        {% endif %}
+                        <div class="card-body p-2">
+                            <p class="card-text fw-bold mb-0 text-dark">{{ category.name }}</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Latest Products -->
+{% if latest_products %}
+<section class="my-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">
+                <i class="fas fa-clock"></i> Nouveautés
+            </h2>
+            <p class="text-muted">Les derniers produits ajoutés à notre catalogue</p>
+        </div>
+        <div class="row">
+            {% for product in latest_products %}
+            <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                <div class="card product-card h-100 shadow-sm">
+                    <a href="{% url 'products:product_detail' product.slug %}" class="text-decoration-none">
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}" class="card-img-top product-image" alt="{{ product.name }}">
+                        {% else %}
+                        <div class="bg-light d-flex align-items-center justify-content-center" style="height: 250px;">
+                            <i class="fas fa-image fa-3x text-secondary"></i>
+                        </div>
+                        {% endif %}
+
+                        <span class="badge bg-success position-absolute top-0 start-0 m-2">
+                            <i class="fas fa-sparkles"></i> Nouveau
+                        </span>
+                    </a>
+
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a href="{% url 'products:product_detail' product.slug %}"
+                                class="text-dark text-decoration-none">
+                                {{ product.name }}
+                            </a>
+                        </h5>
+                        <p class="card-text text-muted small">{{ product.description|truncatewords:10 }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="h5 text-primary mb-0 fw-bold">{{ product.discounted_price }} FCFA</span>
+                            <a href="{% url 'products:product_detail' product.slug %}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Call to Action -->
+<section class="cta-section my-5 py-5">
+    <div class="container text-center">
+        <h2 class="display-4 fw-bold mb-4 text-white">Prêt à commencer ?</h2>
+        <p class="lead mb-4 text-white">Rejoignez des milliers de clients satisfaits</p>
+        <a href="{% url 'products:product_list' %}" class="btn btn-light btn-lg px-5">
+            <i class="fas fa-shopping-bag"></i> Commencer mes achats
+        </a>
+    </div>
+</section>
+
+<style>
+    /* Hero Section */
+    .hero-section {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 20px;
+        margin-top: 2rem;
+    }
+
+    .text-gradient {
+        background: linear-gradient(135deg, #FF6B35, #004E89);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    /* Stats Section */
+    .stat-card {
+        padding: 2rem 1rem;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Product Cards */
+    .product-card {
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
+        transition: all 0.3s;
+    }
+
+    .product-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .product-image {
+        height: 250px;
+        object-fit: cover;
+        transition: transform 0.3s;
+    }
+
+    .product-card:hover .product-image {
+        transform: scale(1.05);
+    }
+
+    /* Category Cards */
+    .category-card {
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
+        transition: all 0.3s;
+        cursor: pointer;
+    }
+
+    .category-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #FF6B35, #004E89);
+    }
+
+    /* CTA Section */
+    .cta-section {
+        background: linear-gradient(135deg, #FF6B35, #004E89);
+        border-radius: 20px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .display-3 {
+            font-size: 2.5rem;
+        }
+
+        .display-5 {
+            font-size: 2rem;
+        }
+    }
+</style>
+{% endblock %}

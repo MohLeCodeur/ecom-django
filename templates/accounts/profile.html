@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}Mon Profil - InnovAfrique{% endblock %}
+
+{% block content %}
+<h1 class="mb-4"><i class="fas fa-user-circle"></i> Mon Profil</h1>
+
+<div class="row">
+    <div class="col-md-4">
+        <!-- Carte de profil -->
+        <div class="card mb-3">
+            <div class="card-body text-center">
+                {% if user.profile.avatar %}
+                <img src="{{ user.profile.avatar.url }}" alt="{{ user.username }}" class="rounded-circle mb-3"
+                    style="width: 150px; height: 150px; object-fit: cover;">
+                {% else %}
+                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto mb-3"
+                    style="width: 150px; height: 150px;">
+                    <i class="fas fa-user fa-5x"></i>
+                </div>
+                {% endif %}
+                <h4 class="mb-1">{{ user.get_full_name|default:user.username }}</h4>
+                <p class="text-muted mb-0">@{{ user.username }}</p>
+                <p class="text-muted"><i class="fas fa-envelope"></i> {{ user.email }}</p>
+            </div>
+        </div>
+
+        <!-- Statistiques -->
+        <div class="card">
+            <div class="card-body">
+                <h6 class="card-title"><i class="fas fa-chart-bar"></i> Statistiques</h6>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Commandes :</span>
+                    <strong>{{ user.orders.count }}</strong>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Avis laissés :</span>
+                    <strong>{{ user.review_set.count }}</strong>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span>Membre depuis :</span>
+                    <strong>{{ user.date_joined|date:"m/Y" }}</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <!-- Formulaire de modification du profil -->
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-edit"></i> Modifier mon profil</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <h6 class="mb-3">Informations personnelles</h6>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="first_name" class="form-label">Prénom</label>
+                            <input type="text" name="first_name" id="first_name" class="form-control"
+                                value="{{ user.first_name }}" placeholder="Prénom">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="last_name" class="form-label">Nom</label>
+                            <input type="text" name="last_name" id="last_name" class="form-control"
+                                value="{{ user.last_name }}" placeholder="Nom">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" name="email" id="email" class="form-control" value="{{ user.email }}"
+                            placeholder="Email">
+                    </div>
+
+                    <hr>
+
+                    <h6 class="mb-3">Coordonnées</h6>
+                    <div class="mb-3">
+                        <label for="{{ form.phone.id_for_label }}" class="form-label">Téléphone</label>
+                        {{ form.phone }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.address.id_for_label }}" class="form-label">Adresse</label>
+                        {{ form.address }}
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.city.id_for_label }}" class="form-label">Ville</label>
+                            {{ form.city }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.postal_code.id_for_label }}" class="form-label">Code postal</label>
+                            {{ form.postal_code }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.country.id_for_label }}" class="form-label">Pays</label>
+                        {{ form.country }}
+                    </div>
+
+                    <hr>
+
+                    <h6 class="mb-3">Photo de profil</h6>
+                    <div class="mb-3">
+                        <label for="{{ form.avatar.id_for_label }}" class="form-label">Avatar</label>
+                        {{ form.avatar }}
+                        <small class="form-text text-muted">Format accepté : JPG, PNG (Max 2MB)</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.bio.id_for_label }}" class="form-label">Biographie</label>
+                        {{ form.bio }}
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'products:home' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Retour
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Enregistrer les modifications
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Dernières commandes -->
+        <div class="card mt-3">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0"><i class="fas fa-shopping-bag"></i> Dernières commandes</h6>
+                    <a href="{% url 'orders:order_list' %}" class="btn btn-sm btn-outline-primary">
+                        Voir tout
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if user.orders.all %}
+                <div class="list-group list-group-flush">
+                    {% for order in user.orders.all|slice:":3" %}
+                    <div class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">Commande #{{ order.id }}</h6>
+                                <small class="text-muted">{{ order.created_at|date:"d/m/Y" }}</small>
+                            </div>
+                            <div class="text-end">
+                                <p class="mb-1"><strong>{{ order.total_amount }} FCFA</strong></p>
+                                {% if order.status == 'delivered' %}
+                                <span class="badge bg-success">Livrée</span>
+                                {% elif order.status == 'shipped' %}
+                                <span class="badge bg-primary">Expédiée</span>
+                                {% else %}
+                                <span class="badge bg-warning">En cours</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted mb-0">Aucune commande pour le moment</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

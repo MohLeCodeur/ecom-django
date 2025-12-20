@@ -1,0 +1,252 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ product.name }} - InnovAfrique{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'products:home' %}">Accueil</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'products:product_list' %}">Produits</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'products:product_list_by_category' product.category.slug %}">
+            {{product.category.name }}</a></li>
+        <li class="breadcrumb-item active">{{ product.name }}</li>
+    </ol>
+</nav>
+
+
+<div class="row">
+    <!-- Images du produit -->
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-body">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" class="img-fluid rounded" alt="{{ product.name }}" id="mainImage">
+                {% else %}
+                <div class="bg-secondary text-white d-flex align-items-center justify-content-center rounded"
+                    style="height: 400px;">
+                    <i class="fas fa-image fa-5x"></i>
+                </div>
+                {% endif %}
+
+                <!-- Images supplémentaires -->
+                {% if product.images.all %}
+                <div class="row mt-3">
+                    {% for image in product.images.all %}
+                    <div class="col-3">
+                        <img src="{{ image.image.url }}" class="img-thumbnail cursor-pointer" alt="{{ image.alt_text }}"
+                            onclick="document.getElementById('mainImage').src='{{ image.image.url }}'">
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Informations du produit -->
+    <div class="col-md-6">
+        <h1 class="mb-3">{{ product.name }}</h1>
+
+        <!-- Prix -->
+        <div class="mb-3">
+            {% if product.discount_percentage > 0 %}
+            <span class="badge bg-danger mb-2">-{{ product.discount_percentage }}% de réduction</span><br>
+            <span class="h4 text-muted text-decoration-line-through">{{ product.price }} FCFA</span><br>
+            <span class="h2 text-primary">{{ product.discounted_price }} FCFA</span>
+            {% else %}
+            <span class="h2 text-primary">{{ product.price }} FCFA</span>
+            {% endif %}
+        </div>
+
+        <!-- Note moyenne -->
+        {% if average_rating %}
+        <div class="mb-3">
+            <span class="text-warning">
+                {% for i in "12345" %}
+                {% if forloop.counter <= average_rating %} <i class="fas fa-star"></i>
+                    {% else %}
+                    <i class="far fa-star"></i>
+                    {% endif %}
+                    {% endfor %}
+            </span>
+            <span class="text-muted">({{ reviews.count }} avis)</span>
+        </div>
+        {% endif %}
+
+        <!-- Stock -->
+        <div class="mb-3">
+            {% if product.is_in_stock %}
+            <span class="badge bg-success"><i class="fas fa-check"></i> En stock ({{ product.stock }}
+                disponibles)</span>
+            {% else %}
+            <span class="badge bg-danger"><i class="fas fa-times"></i> Rupture de stock</span>
+            {% endif %}
+        </div>
+
+        <!-- Description -->
+        <div class="mb-4">
+            <h5>Description</h5>
+            <p class="text-muted">{{ product.description }}</p>
+        </div>
+
+        <!-- Catégorie -->
+        <div class="mb-3">
+            <strong>Catégorie :</strong>
+            <a href="{% url 'products:product_list_by_category' product.category.slug %}"
+                class="badge bg-secondary text-decoration-none">
+                {{ product.category.name }}
+            </a>
+        </div>
+
+        <!-- Formulaire d'ajout au panier -->
+        {% if product.is_in_stock %}
+        <form method="post" action="{% url 'cart:cart_add' product.id %}">
+            {% csrf_token %}
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label for="quantity" class="form-label">Quantité</label>
+                    <input type="number" name="quantity" id="quantity" class="form-control" value="1" min="1"
+                        max="{{ product.stock }}">
+                </div>
+            </div>
+            <input type="hidden" name="next" value="{% url 'products:product_detail' product.slug %}">
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="fas fa-shopping-cart"></i> Ajouter au panier
+                </button>
+            </div>
+        </form>
+        {% else %}
+        <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle"></i> Ce produit est actuellement en rupture de stock.
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Avis clients -->
+<div class="row mt-5">
+    <div class="col-md-12">
+        <h3 class="mb-4"><i class="fas fa-comments"></i> Avis clients ({{ reviews.count }})</h3>
+
+        {% if user.is_authenticated %}
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Laisser un avis</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" action="{% url 'products:add_review' product.id %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="rating" class="form-label">Note</label>
+                        <select name="rating" id="rating" class="form-select" required>
+                            <option value="">Choisir une note</option>
+                            <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
+                            <option value="4">⭐⭐⭐⭐ Très bien</option>
+                            <option value="3">⭐⭐⭐ Bien</option>
+                            <option value="2">⭐⭐ Moyen</option>
+                            <option value="1">⭐ Mauvais</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="comment" class="form-label">Commentaire</label>
+                        <textarea name="comment" id="comment" class="form-control" rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i> Publier l'avis
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i> Vous devez être <a
+                href="{% url 'accounts:login' %}?next={{ request.path }}">connecté</a> pour laisser un avis.
+        </div>
+        {% endif %}
+
+        <!-- Liste des avis -->
+        {% if reviews %}
+        <div class="row">
+            {% for review in reviews %}
+            <div class="col-md-12 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <h6 class="mb-1">
+                                <i class="fas fa-user-circle"></i> {{ review.user.username }}
+                            </h6>
+                            <small class="text-muted">{{ review.created_at|date:"d/m/Y" }}</small>
+                        </div>
+                        <div class="text-warning mb-2">
+                            {% for i in "12345" %}
+                            {% if forloop.counter <= review.rating %} <i class="fas fa-star"></i>
+                                {% else %}
+                                <i class="far fa-star"></i>
+                                {% endif %}
+                                {% endfor %}
+                        </div>
+                        <p class="mb-0">{{ review.comment }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-muted">Aucun avis pour le moment. Soyez le premier à donner votre avis !</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Produits similaires -->
+{% if related_products %}
+<div class="row mt-5">
+    <div class="col-md-12">
+        <h3 class="mb-4"><i class="fas fa-th"></i> Produits similaires</h3>
+        <div class="row">
+            {% for related in related_products %}
+            <div class="col-md-3 mb-4">
+                <div class="card h-100 shadow-sm hover-shadow">
+                    <a href="{% url 'products:product_detail' related.slug %}">
+                        {% if related.image %}
+                        <img src="{{ related.image.url }}" class="card-img-top" alt="{{ related.name }}"
+                            style="height: 150px; object-fit: cover;">
+                        {% else %}
+                        <div class="bg-secondary text-white d-flex align-items-center justify-content-center"
+                            style="height: 150px;">
+                            <i class="fas fa-image fa-2x"></i>
+                        </div>
+                        {% endif %}
+                    </a>
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <a href="{% url 'products:product_detail' related.slug %}"
+                                class="text-dark text-decoration-none">
+                                {{ related.name }}
+                            </a>
+                        </h6>
+                        <p class="h6 text-primary">{{ related.discounted_price }} FCFA</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<style>
+    .cursor-pointer {
+        cursor: pointer;
+    }
+
+    .hover-shadow {
+        transition: all 0.3s;
+    }
+
+    .hover-shadow:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2) !important;
+    }
+</style>
+{% endblock %}

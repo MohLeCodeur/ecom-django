@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Paiement - Commande #{{ order.id }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="fas fa-credit-card"></i> Paiement sécurisé</h4>
+            </div>
+            <div class="card-body">
+                <h5 class="mb-4">Commande #{{ order.id }}</h5>
+
+                <!-- Résumé de la commande -->
+                <div class="alert alert-info">
+                    <h6><i class="fas fa-info-circle"></i> Résumé</h6>
+                    <ul class="mb-0">
+                        <li>Nombre d'articles : <strong>{{ order.items.count }}</strong></li>
+                        <li>Montant total : <strong class="text-primary">{{ order.total_amount }} FCFA</strong></li>
+                    </ul>
+                </div>
+
+                <!-- Mode Test -->
+                <div class="alert alert-warning">
+                    <h6><i class="fas fa-flask"></i> Mode Test Stripe</h6>
+                    <p class="mb-2">Utilisez ces cartes de test :</p>
+                    <ul class="mb-0">
+                        <li><strong>Paiement réussi :</strong> <code>4242 4242 4242 4242</code></li>
+                        <li><strong>Paiement refusé :</strong> <code>4000 0000 0000 0002</code></li>
+                        <li><strong>Date :</strong> N'importe quelle date future (ex: 12/25)</li>
+                        <li><strong>CVV :</strong> N'importe quel 3 chiffres (ex: 123)</li>
+                    </ul>
+                </div>
+
+                <!-- Bouton de paiement -->
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-lock"></i> Payer {{ order.total_amount }} FCFA avec Stripe
+                        </button>
+                    </div>
+                </form>
+
+                <div class="text-center mt-3">
+                    <a href="{% url 'orders:order_detail' order.id %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Retour à la commande
+                    </a>
+                </div>
+
+                <!-- Sécurité -->
+                <div class="mt-4 text-center text-muted small">
+                    <i class="fas fa-shield-alt"></i> Paiement sécurisé par Stripe<br>
+                    <i class="fas fa-lock"></i> Vos informations sont cryptées
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

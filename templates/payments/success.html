@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Paiement réussi{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow text-center">
+            <div class="card-body py-5">
+                <div class="mb-4">
+                    <i class="fas fa-check-circle fa-5x text-success"></i>
+                </div>
+                <h2 class="mb-3">Paiement réussi !</h2>
+                <p class="lead mb-4">Votre commande #{{ order.id }} a été payée avec succès.</p>
+
+                <div class="alert alert-success">
+                    <h5>Montant payé : {{ order.total_amount }} FCFA</h5>
+                </div>
+
+                <p class="text-muted mb-4">
+                    Vous recevrez un email de confirmation à <strong>{{ order.email }}</strong>
+                </p>
+
+                <div class="d-grid gap-2">
+                    <a href="{% url 'orders:order_detail' order.id %}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-eye"></i> Voir ma commande
+                    </a>
+                    <a href="{% url 'products:product_list' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-shopping-bag"></i> Continuer mes achats
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

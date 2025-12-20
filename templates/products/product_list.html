@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{% if category %}{{ category.name }} - {% endif %}Produits - InnovAfrique
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h1 class="mb-3">
+            {% if category %}
+            <i class="fas fa-folder"></i> {{ category.name }}
+            {% else %}
+            <i class="fas fa-shopping-bag"></i> Tous les produits
+            {% endif %}
+        </h1>
+
+        <!-- Barre de recherche et filtres -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form method="get" class="row g-3">
+                    <div class="col-md-6">
+                        <input type="text" name="q" class="form-control" placeholder="Rechercher un produit..."
+                            value="{{ search_query }}">
+                    </div>
+                    <div class="col-md-4">
+                        <select name="sort" class="form-select">
+                            <option value="-created_at">Plus récents</option>
+                            <option value="price">Prix croissant</option>
+                            <option value="-price">Prix décroissant</option>
+                            <option value="name">Nom A-Z</option>
+                            <option value="-name">Nom Z-A</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-search"></i> Rechercher
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Catégories -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="d-flex flex-wrap gap-2">
+            <a href="{% url 'products:product_list' %}"
+                class="btn btn-sm {% if not category %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                Toutes les catégories
+            </a>
+            {% for cat in categories %}
+            <a href="{% url 'products:product_list_by_category' cat.slug %}"
+                class="btn btn-sm {% if category and category.slug == cat.slug %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                {{ cat.name }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Liste des produits -->
+<div class="row">
+    {% if products %}
+    {% for product in products %}
+    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+        <div class="card h-100 shadow-sm hover-shadow">
+            <a href="{% url 'products:product_detail' product.slug %}" class="text-decoration-none">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}"
+                    style="height: 200px; object-fit: cover;">
+                {% else %}
+                <div class="bg-secondary text-white d-flex align-items-center justify-content-center"
+                    style="height: 200px;">
+                    <i class="fas fa-image fa-3x"></i>
+                </div>
+                {% endif %}
+
+                {% if product.discount_percentage > 0 %}
+                <span class="badge bg-danger position-absolute top-0 end-0 m-2">
+                    -{{ product.discount_percentage }}%
+                </span>
+                {% endif %}
+
+                {% if not product.is_in_stock %}
+                <span class="badge bg-dark position-absolute top-0 start-0 m-2">
+                    Rupture de stock
+                </span>
+                {% endif %}
+            </a>
+
+            <div class="card-body">
+                <h5 class="card-title">
+                    <a href="{% url 'products:product_detail' product.slug %}" class="text-dark text-decoration-none">
+                        {{ product.name }}
+                    </a>
+                </h5>
+                <p class="card-text text-muted small">{{ product.description|truncatewords:12 }}</p>
+
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div>
+                        {% if product.discount_percentage > 0 %}
+                        <small class="text-muted text-decoration-line-through">{{ product.price }} FCFA</small><br>
+                        <span class="h5 text-primary mb-0">{{ product.discounted_price }} FCFA</span>
+                        {% else %}
+                        <span class="h5 text-primary mb-0">{{ product.price }} FCFA</span>
+                        {% endif %}
+                    </div>
+                    <small class="text-muted">
+                        <i class="fas fa-box"></i> {{ product.stock }}
+                    </small>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <a href="{% url 'products:product_detail' product.slug %}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-eye"></i> Voir détails
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="col-12">
+        <div class="alert alert-info text-center">
+            <i class="fas fa-info-circle"></i> Aucun produit trouvé.
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Pagination -->
+{% if products.has_other_pages %}
+<nav aria-label="Pagination">
+    <ul class="pagination justify-content-center">
+        {% if products.has_previous %}
+        <li class="page-item">
+            <a class="page-link"
+                href="?page={{ products.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}">
+                <i class="fas fa-chevron-left"></i> Précédent
+            </a>
+        </li>
+        {% endif %}
+
+        {% for num in products.paginator.page_range %}
+        {% if products.number == num %}
+        <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+        {% elif num > products.number|add:'-3' and num < products.number|add:'3' %} <li class="page-item">
+            <a class="page-link"
+                href="?page={{ num }}{% if search_query %}&q={{ search_query }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}">{{
+                num }}</a>
+            </li>
+            {% endif %}
+            {% endfor %}
+
+            {% if products.has_next %}
+            <li class="page-item">
+                <a class="page-link"
+                    href="?page={{ products.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}">
+                    Suivant <i class="fas fa-chevron-right"></i>
+                </a>
+            </li>
+            {% endif %}
+    </ul>
+</nav>
+{% endif %}
+
+<style>
+    .hover-shadow {
+        transition: all 0.3s;
+    }
+
+    .hover-shadow:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2) !important;
+    }
+</style>
+{% endblock %}

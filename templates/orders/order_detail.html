@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+
+{% block title %}Commande #{{ order.id }} - InnovAfrique{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="alert alert-success">
+            <h4 class="alert-heading"><i class="fas fa-check-circle"></i> Commande confirmée !</h4>
+            <p>Votre commande #{{ order.id }} a été enregistrée avec succès.</p>
+            <hr>
+            <p class="mb-0">Vous recevrez un email de confirmation à <strong>{{ order.email }}</strong></p>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-shopping-bag"></i> Détails de la commande #{{ order.id }}</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <p class="mb-1"><strong>Date :</strong> {{ order.created_at|date:"d/m/Y à H:i" }}</p>
+                        <p class="mb-1"><strong>Statut :</strong>
+                            {% if order.status == 'pending' %}
+                            <span class="badge bg-warning">En attente</span>
+                            {% elif order.status == 'processing' %}
+                            <span class="badge bg-info">En traitement</span>
+                            {% elif order.status == 'shipped' %}
+                            <span class="badge bg-primary">Expédiée</span>
+                            {% elif order.status == 'delivered' %}
+                            <span class="badge bg-success">Livrée</span>
+                            {% else %}
+                            <span class="badge bg-danger">Annulée</span>
+                            {% endif %}
+                        </p>
+                        <p class="mb-1"><strong>Paiement :</strong>
+                            {% if order.paid %}
+                            <span class="badge bg-success">Payé</span>
+                            {% else %}
+                            <span class="badge bg-danger">Non payé</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="mb-1"><strong>Montant total :</strong></p>
+                        <h3 class="text-primary">{{ order.total_amount }} FCFA</h3>
+                    </div>
+                </div>
+
+                <hr>
+
+                <h6 class="mb-3">Articles commandés</h6>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Produit</th>
+                            <th>Prix unitaire</th>
+                            <th>Quantité</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order.items.all %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'products:product_detail' item.product.slug %}"
+                                    class="text-decoration-none">
+                                    {{ item.product.name }}
+                                </a>
+                            </td>
+                            <td>{{ item.price }} FCFA</td>
+                            <td>{{ item.quantity }}</td>
+                            <td><strong>{{ item.get_cost }} FCFA</strong></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" class="text-end"><strong>Total :</strong></td>
+                            <td><strong class="text-primary">{{ order.total_amount }} FCFA</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <!-- Informations de livraison -->
+        <div class="card mb-3">
+            <div class="card-header bg-secondary text-white">
+                <h6 class="mb-0"><i class="fas fa-truck"></i> Adresse de livraison</h6>
+            </div>
+            <div class="card-body">
+                <p class="mb-1"><strong>{{ order.first_name }} {{ order.last_name }}</strong></p>
+                <p class="mb-1">{{ order.address }}</p>
+                <p class="mb-1">{{ order.city }}, {{ order.postal_code }}</p>
+                <p class="mb-1">{{ order.country }}</p>
+                <hr>
+                <p class="mb-1"><i class="fas fa-envelope"></i> {{ order.email }}</p>
+                <p class="mb-0"><i class="fas fa-phone"></i> {{ order.phone }}</p>
+            </div>
+        </div>
+
+        {% if order.notes %}
+        <!-- Notes -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-sticky-note"></i> Notes</h6>
+            </div>
+            <div class="card-body">
+                <p class="mb-0">{{ order.notes }}</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Actions -->
+        <div class="card">
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    {% if not order.paid %}
+                    <a href="{% url 'payments:payment_process' order.id %}" class="btn btn-success btn-lg">
+                        <i class="fas fa-credit-card"></i> Payer maintenant
+                    </a>
+                    {% endif %}
+                    <a href="{% url 'orders:order_list' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-list"></i> Mes commandes
+                    </a>
+                    <a href="{% url 'products:product_list' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-shopping-bag"></i> Continuer mes achats
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Connexion - InnovAfrique{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white text-center">
+                <h4 class="mb-0"><i class="fas fa-sign-in-alt"></i> Connexion</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="{{ form.username.id_for_label }}" class="form-label">
+                            <i class="fas fa-user"></i> Nom d'utilisateur
+                        </label>
+                        <input type="text" name="username" class="form-control" id="{{ form.username.id_for_label }}"
+                            placeholder="Votre nom d'utilisateur" required autofocus>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.password.id_for_label }}" class="form-label">
+                            <i class="fas fa-lock"></i> Mot de passe
+                        </label>
+                        <input type="password" name="password" class="form-control"
+                            id="{{ form.password.id_for_label }}" placeholder="Votre mot de passe" required>
+                    </div>
+
+                    {% if form.errors %}
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle"></i> Nom d'utilisateur ou mot de passe incorrect.
+                    </div>
+                    {% endif %}
+
+                    <div class="d-grid mb-3">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-sign-in-alt"></i> Se connecter
+                        </button>
+                    </div>
+
+                    <div class="text-center">
+                        <p class="mb-0">Pas encore de compte ?
+                            <a href="{% url 'accounts:register' %}" class="text-decoration-none">
+                                Créer un compte
+                            </a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Avantages de créer un compte -->
+        <div class="card mt-3">
+            <div class="card-body">
+                <h6 class="card-title"><i class="fas fa-star text-warning"></i> Pourquoi créer un compte ?</h6>
+                <ul class="list-unstyled mb-0">
+                    <li class="mb-2"><i class="fas fa-check text-success"></i> Suivre vos commandes</li>
+                    <li class="mb-2"><i class="fas fa-check text-success"></i> Enregistrer vos adresses</li>
+                    <li class="mb-2"><i class="fas fa-check text-success"></i> Accéder à votre historique</li>
+                    <li class="mb-0"><i class="fas fa-check text-success"></i> Laisser des avis</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

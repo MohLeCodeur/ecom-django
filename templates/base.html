@@ -1,15 +1,20 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}InnovAfrique - E-commerce{% endblock %}</title>
-    
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' style='stop-color:%23FF6B35;stop-opacity:1' /><stop offset='100%25' style='stop-color:%23004E89;stop-opacity:1' /></linearGradient></defs><circle cx='50' cy='50' r='45' fill='url(%23grad)'/><path d='M 30 35 L 30 70 L 50 75 L 70 70 L 70 35 L 50 30 Z' fill='white'/><circle cx='50' cy='50' r='8' fill='%23FF6B35'/></svg>">
+
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <style>
         :root {
             --primary-color: #FF6B35;
@@ -18,33 +23,33 @@
             --dark-color: #1A1A2E;
             --light-color: #F5F5F5;
         }
-        
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--light-color);
         }
-        
+
         .navbar {
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
-        
+
         .navbar-brand {
             font-weight: bold;
             font-size: 1.5rem;
             color: white !important;
         }
-        
+
         .nav-link {
-            color: rgba(255,255,255,0.9) !important;
+            color: rgba(255, 255, 255, 0.9) !important;
             transition: all 0.3s;
         }
-        
+
         .nav-link:hover {
             color: white !important;
             transform: translateY(-2px);
         }
-        
+
         .cart-badge {
             position: absolute;
             top: -5px;
@@ -55,32 +60,33 @@
             padding: 2px 6px;
             font-size: 0.75rem;
         }
-        
+
         .btn-primary {
             background-color: var(--primary-color);
             border-color: var(--primary-color);
         }
-        
+
         .btn-primary:hover {
             background-color: #e55a2b;
             border-color: #e55a2b;
         }
-        
+
         .footer {
             background-color: var(--dark-color);
             color: white;
             padding: 2rem 0;
             margin-top: 4rem;
         }
-        
+
         .alert {
             border-radius: 10px;
             margin-top: 1rem;
         }
     </style>
-    
+
     {% block extra_css %}{% endblock %}
 </head>
+
 <body>
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark">
@@ -102,30 +108,30 @@
                 </ul>
                 <ul class="navbar-nav">
                     {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'orders:order_list' %}">Mes commandes</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'accounts:profile' %}">
-                                <i class="fas fa-user"></i> {{ user.username }}
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'accounts:logout' %}">Déconnexion</a>
-                        </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'orders:order_list' %}">Mes commandes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:profile' %}">
+                            <i class="fas fa-user"></i> {{ user.username }}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:logout' %}">Déconnexion</a>
+                    </li>
                     {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'accounts:login' %}">Connexion</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'accounts:register' %}">Inscription</a>
-                        </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:login' %}">Connexion</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:register' %}">Inscription</a>
+                    </li>
                     {% endif %}
                     <li class="nav-item position-relative">
                         <a class="nav-link" href="{% url 'cart:cart_detail' %}">
                             <i class="fas fa-shopping-cart"></i> Panier
                             {% if cart|length > 0 %}
-                                <span class="cart-badge">{{ cart|length }}</span>
+                            <span class="cart-badge">{{ cart|length }}</span>
                             {% endif %}
                         </a>
                     </li>
@@ -137,12 +143,12 @@
     <!-- Messages -->
     <div class="container">
         {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            {% endfor %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
         {% endif %}
     </div>
 
@@ -186,4 +192,5 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     {% block extra_js %}{% endblock %}
 </body>
+
 </html>

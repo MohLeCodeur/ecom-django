@@ -1,5 +1,6 @@
 {% extends "admin/base_site.html" %}
 {% load static %}
+{% load price_filters %}
 
 {% block title %}Dashboard - InnovAfrique{% endblock %}
 
@@ -189,7 +190,7 @@
 <!-- Statistiques principales -->
 <div class="stats-row">
     <div class="stat-box blue">
-        <h3>{{ total_revenue|floatformat:0 }} FCFA</h3>
+        <h3>{{ total_revenue|fcfa }}</h3>
         <p>Chiffre d'affaires total</p>
     </div>
 
@@ -212,12 +213,12 @@
 <!-- Statistiques secondaires -->
 <div class="stats-row">
     <div class="stat-box blue">
-        <h3>{{ monthly_revenue|floatformat:0 }} FCFA</h3>
+        <h3>{{ monthly_revenue|fcfa }}</h3>
         <p>CA du mois ({{ monthly_orders }} commandes)</p>
     </div>
 
     <div class="stat-box green">
-        <h3>{{ weekly_revenue|floatformat:0 }} FCFA</h3>
+        <h3>{{ weekly_revenue|fcfa }}</h3>
         <p>CA de la semaine ({{ weekly_orders }} commandes)</p>
     </div>
 
@@ -227,7 +228,7 @@
     </div>
 
     <div class="stat-box purple">
-        <h3>{{ average_order|floatformat:0 }} FCFA</h3>
+        <h3>{{ average_order|fcfa }}</h3>
         <p>Panier moyen</p>
     </div>
 </div>
@@ -250,7 +251,7 @@
                 <tr>
                     <td>{{ product.name }}</td>
                     <td style="text-align: center;"><strong>{{ product.total_sold }}</strong></td>
-                    <td style="text-align: right;">{{ product.price }} FCFA</td>
+                    <td style="text-align: right;">{{ product.price|fcfa }}</td>
                 </tr>
                 {% empty %}
                 <tr>
@@ -283,7 +284,7 @@
                         </a>
                     </td>
                     <td>{{ order.first_name }} {{ order.last_name }}</td>
-                    <td style="text-align: right;"><strong>{{ order.total_amount }} FCFA</strong></td>
+                    <td style="text-align: right;"><strong>{{ order.total_amount|fcfa }}</strong></td>
                     <td style="text-align: center;">
                         {% if order.paid %}
                         <span class="badge badge-success">Payé</span>

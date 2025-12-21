@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load price_filters %}
 
 {% block title %}{{ product.name }} - InnovAfrique{% endblock %}
 
@@ -51,10 +52,10 @@
         <div class="mb-3">
             {% if product.discount_percentage > 0 %}
             <span class="badge bg-danger mb-2">-{{ product.discount_percentage }}% de réduction</span><br>
-            <span class="h4 text-muted text-decoration-line-through">{{ product.price }} FCFA</span><br>
-            <span class="h2 text-primary">{{ product.discounted_price }} FCFA</span>
+            <span class="h4 text-muted text-decoration-line-through">{{ product.price|fcfa }}</span><br>
+            <span class="h2 text-primary">{{ product.discounted_price|fcfa }}</span>
             {% else %}
-            <span class="h2 text-primary">{{ product.price }} FCFA</span>
+            <span class="h2 text-primary">{{ product.price|fcfa }}</span>
             {% endif %}
         </div>
 
@@ -225,7 +226,7 @@
                                 {{ related.name }}
                             </a>
                         </h6>
-                        <p class="h6 text-primary">{{ related.discounted_price }} FCFA</p>
+                        <p class="h6 text-primary">{{ related.discounted_price|fcfa }}</p>
                     </div>
                 </div>
             </div>

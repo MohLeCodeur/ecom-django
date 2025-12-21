@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load price_filters %}
 
 {% block title %}
 {% if category %}{{ category.name }} - {% endif %}Produits - InnovAfrique
@@ -102,10 +103,10 @@
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <div>
                         {% if product.discount_percentage > 0 %}
-                        <small class="text-muted text-decoration-line-through">{{ product.price }} FCFA</small><br>
-                        <span class="h5 text-primary mb-0">{{ product.discounted_price }} FCFA</span>
+                        <small class="text-muted text-decoration-line-through">{{ product.price|fcfa }}</small><br>
+                        <span class="h5 text-primary mb-0">{{ product.discounted_price|fcfa }}</span>
                         {% else %}
-                        <span class="h5 text-primary mb-0">{{ product.price }} FCFA</span>
+                        <span class="h5 text-primary mb-0">{{ product.price|fcfa }}</span>
                         {% endif %}
                     </div>
                     <small class="text-muted">

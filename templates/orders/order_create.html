@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load price_filters %}
 {% load widget_tweaks %}
 
 {% block title %}Passer commande - InnovAfrique{% endblock %}
@@ -115,16 +116,16 @@
                 <div class="d-flex justify-content-between mb-2">
                     <div>
                         <small>{{ item.product.name }}</small><br>
-                        <small class="text-muted">{{ item.quantity }} x {{ item.price }} FCFA</small>
+                        <small class="text-muted">{{ item.quantity }} x {{ item.price|fcfa }}</small>
                     </div>
-                    <strong>{{ item.total_price }} FCFA</strong>
+                    <strong>{{ item.total_price|fcfa }}</strong>
                 </div>
                 <hr class="my-2">
                 {% endfor %}
 
                 <div class="d-flex justify-content-between mt-3">
                     <h6>Total :</h6>
-                    <h5 class="text-primary">{{ cart.get_total_price }} FCFA</h5>
+                    <h5 class="text-primary">{{ cart.get_total_price|fcfa }}</h5>
                 </div>
             </div>
         </div>

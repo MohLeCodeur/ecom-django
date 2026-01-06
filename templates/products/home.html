@@ -8,20 +8,59 @@
 <div class="hero-section mb-5">
     <div class="container">
         <div class="row align-items-center py-5">
-            <div class="col-lg-6 text-center text-lg-start">
+            <div class="col-lg-6 text-center text-lg-start position-relative">
+                <!-- Badges décoratifs -->
+                <div class="floating-badge badge-1">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="floating-badge badge-2">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <div class="floating-badge badge-3">
+                    <i class="fas fa-shopping-bag"></i>
+                </div>
+
+                <!-- Badge "Nouveau" -->
+                <span class="badge bg-success mb-3 px-3 py-2">
+                    <i class="fas fa-sparkles"></i> Nouveau sur le marché
+                </span>
+
                 <h1 class="display-3 fw-bold mb-4">
                     <span class="text-gradient">InnovAfrique</span>
                 </h1>
+
+                <!-- Ligne décorative -->
+                <div class="decorative-line mb-3"></div>
+
                 <p class="lead mb-4 text-dark">
-                    Découvrez les produits innovants d'Afrique.
+                    <i class="fas fa-check-circle text-success me-2"></i>
+                    Découvrez les produits innovants d'Afrique.<br>
+                    <i class="fas fa-check-circle text-success me-2"></i>
                     Des articles authentiques, de qualité et à prix compétitifs.
                 </p>
+
+                <!-- Stats rapides -->
+                <div class="quick-stats mb-4">
+                    <div class="stat-item">
+                        <i class="fas fa-box text-primary"></i>
+                        <span>100+ Produits</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-truck text-success"></i>
+                        <span>Livraison rapide</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-shield-alt text-warning"></i>
+                        <span>Paiement sécurisé</span>
+                    </div>
+                </div>
+
                 <div class="d-flex gap-3 justify-content-center justify-content-lg-start">
-                    <a href="{% url 'products:product_list' %}" class="btn btn-primary btn-lg px-4">
+                    <a href="{% url 'products:product_list' %}" class="btn btn-primary btn-lg px-4 btn-animated">
                         <i class="fas fa-shopping-bag"></i> Découvrir nos produits
                     </a>
                     {% if not user.is_authenticated %}
-                    <a href="{% url 'accounts:register' %}" class="btn btn-outline-primary btn-lg px-4">
+                    <a href="{% url 'accounts:register' %}" class="btn btn-outline-primary btn-lg px-4 btn-animated">
                         <i class="fas fa-user-plus"></i> S'inscrire
                     </a>
                     {% endif %}
@@ -29,7 +68,9 @@
             </div>
             <div class="col-lg-6 text-center mt-4 mt-lg-0">
                 <div class="hero-image">
-                    <i class="fas fa-shopping-cart fa-10x text-primary opacity-75"></i>
+                    {% load static %}
+                    <img src="{% static 'images/hero-image.png' %}" alt="InnovAfrique Products"
+                        class="img-fluid rounded shadow-lg">
                 </div>
             </div>
         </div>
@@ -113,7 +154,8 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
                                 {% if product.discount_percentage > 0 %}
-                                <small class="text-muted text-decoration-line-through d-block">{{ product.price|fcfa}}</small>
+                                <small
+                                    class="text-muted text-decoration-line-through d-block">{{product.price|fcfa}}</small>
                                 <span class="h5 text-primary mb-0 fw-bold">{{ product.discounted_price|fcfa }}</span>
                                 {% else %}
                                 <span class="h5 text-primary mb-0 fw-bold">{{ product.price|fcfa }}</span>
@@ -241,6 +283,8 @@
         background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
         border-radius: 20px;
         margin-top: 2rem;
+        overflow: hidden;
+        position: relative;
     }
 
     .text-gradient {
@@ -248,6 +292,151 @@
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
+    }
+
+    /* Badges flottants animés */
+    .floating-badge {
+        position: absolute;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        color: white;
+        animation: float 3s ease-in-out infinite;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .badge-1 {
+        background: linear-gradient(135deg, #FFD700, #FFA500);
+        top: 10%;
+        right: 10%;
+        animation-delay: 0s;
+    }
+
+    .badge-2 {
+        background: linear-gradient(135deg, #FF6B6B, #C92A2A);
+        top: 50%;
+        right: 5%;
+        animation-delay: 1s;
+    }
+
+    .badge-3 {
+        background: linear-gradient(135deg, #4ECDC4, #44A08D);
+        top: 80%;
+        right: 15%;
+        animation-delay: 2s;
+    }
+
+    @keyframes float {
+
+        0%,
+        100% {
+            transform: translateY(0px);
+        }
+
+        50% {
+            transform: translateY(-20px);
+        }
+    }
+
+    /* Ligne décorative */
+    .decorative-line {
+        width: 100px;
+        height: 4px;
+        background: linear-gradient(90deg, #FF6B35, #004E89);
+        border-radius: 2px;
+        margin: 0 auto;
+    }
+
+    @media (min-width: 992px) {
+        .decorative-line {
+            margin: 0;
+        }
+    }
+
+    /* Stats rapides */
+    .quick-stats {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    @media (min-width: 992px) {
+        .quick-stats {
+            justify-content: flex-start;
+        }
+    }
+
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: white;
+        padding: 10px 15px;
+        border-radius: 25px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s;
+    }
+
+    .stat-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    .stat-item i {
+        font-size: 1.2rem;
+    }
+
+    .stat-item span {
+        font-weight: 600;
+        color: #2c3e50;
+        font-size: 0.9rem;
+    }
+
+    /* Boutons animés */
+    .btn-animated {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s;
+    }
+
+    .btn-animated::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+
+    .btn-animated:hover::before {
+        width: 300px;
+        height: 300px;
+    }
+
+    .btn-animated:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Image Hero */
+    .hero-image img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 15px;
+        transition: transform 0.3s ease;
+    }
+
+    .hero-image img:hover {
+        transform: scale(1.02);
     }
 
     /* Stats Section */
